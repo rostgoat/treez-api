@@ -20,21 +20,21 @@ export class InventoryController {
 
     /**
      * Update inventory item
-     * @param id String
+     * @param inventory_id String
      * @param data Object
      */
     @Put(':id')
-    update(@Param('id') id: string, @Body() body: Partial<InventoryDTO>) {
-        return this.inventoryService.edit(id, body)
+    update(@Param('id') inventory_id: string, @Body() body: Partial<InventoryDTO>) {
+        return this.inventoryService.edit(inventory_id, body)
     }
 
     /**
      * Delete invetory item
-     * @param id String
+     * @param inventory_id String
      */
     @Delete(':id')
-    delete(@Param('id') id: string) {
-        return this.inventoryService.delete(id)
+    delete(@Param('id') inventory_id: string) {
+        return this.inventoryService.delete(inventory_id)
     }
 
     /**
@@ -47,10 +47,10 @@ export class InventoryController {
 
     /**
      * Get a specific invetory item
-     * @param id String
+     * @param inventory_id String
      */
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.inventoryService.getOne(id)
+    findOne(@Param('id') inventory_id: string) {
+        return this.inventoryService.getOne(inventory_id)
     }
 }

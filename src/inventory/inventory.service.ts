@@ -23,29 +23,37 @@ export class InventoryService {
 
     /**
      * Update inventory item
-     * @param id String
+     * @param inventory_id String
      * @param data Object
      */
-    async edit(id: string, data: Partial<InventoryDTO>) {
-        await this.inventoryRepository.update({id}, data)
-        return await this.inventoryRepository.findOne({id})
+    async edit(inventory_id: string, data: Partial<InventoryDTO>) {
+        await this.inventoryRepository.update({inventory_id}, data)
+        return await this.inventoryRepository.findOne({inventory_id})
     }
 
     /**
      * Delete inventory item
-     * @param id String
+     * @param inventory_id String
      */
-    async delete(id: string) {
-        await this.inventoryRepository.delete({id})
+    async delete(inventory_id: string) {
+        await this.inventoryRepository.delete({inventory_id})
         return {deleted: true}
     }
 
     /**
-     * Return specific invetory item specified by id
-     * @param id String
+     * Return specific invetory item specified by inventory_id
+     * @param inventory_id String
      */
-    async getOne(id: string) {
-        return await this.inventoryRepository.findOne({ where: { id } })
+    async getOne(inventory_id: string) {
+        return await this.inventoryRepository.findOne({ where: { inventory_id } })
+    }
+
+    /**
+     * Return specific invetory item specified by name
+     * @param name String
+     */
+    async getOneByName(name: string) {
+        return await this.inventoryRepository.findOne({ where: { name } })
     }
 
     /**

@@ -1,8 +1,8 @@
 {
   "name": "treez-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Treez API",
+  "author": "Rost Myshkin",
   "license": "MIT",
   "scripts": {
     "prebuild": "rm -rf dist",

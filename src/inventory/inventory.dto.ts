@@ -3,5 +3,6 @@
  */
 export interface InventoryDTO {
     name: string,
-    description: string
+    description: string,
+    quantity_available: number,
 }
