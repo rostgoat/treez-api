@@ -20,7 +20,7 @@ export class InventoryController {
 
     /**
      * Update inventory item
-     * @param id String 
+     * @param id String
      * @param data Object
      */
     @Put(':id')
