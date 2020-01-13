@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity } from './order.entity';
 import { OrderDTO } from './order.dto';
 import { InventoryService } from '../inventory/inventory.service';
+import { OrderItemService } from '../order-item/order-item.service';
 
 /**
  * Order Service
@@ -13,7 +14,8 @@ import { InventoryService } from '../inventory/inventory.service';
 export class OrderService {
     constructor(
         @InjectRepository(OrderEntity) private orderRepository: Repository<OrderEntity>,
-        private inventoryService: InventoryService) {}
+        private inventoryService: InventoryService,
+        private orderItemService: OrderItemService) {}
 
     /**
      * Add order item
@@ -59,7 +61,7 @@ export class OrderService {
 
         // create new order
         const createdOrder = await this.orderRepository.create(newOrder)
-
+        await this.orderRepository.save(createdOrder)
         // if the order was succesfully created, update inventory
         if (createdOrder) {
             // loop through each item and update the inventory entity
@@ -76,6 +78,15 @@ export class OrderService {
                 })
             })
         }
+
+        await Promise.each(inventories, async item => {
+            // create order item
+            await this.orderItemService.add({
+                quantity: item.quantity,
+                previous_quantity: 0,
+                orderId: createdOrder.order_id,
+            })
+        })
 
         // save created order changes to database
         await this.orderRepository.save(createdOrder)
@@ -160,27 +171,34 @@ export class OrderService {
      * Delete order item
      * @param order_id String
      */
-    async delete(order_id: string, data: Partial<OrderDTO>) {
-        // // get original order
-        // const originalOrder = await this.getOne(order_id);
+    async delete(order_id: string) {
+        // get related inventory items
+        const inventories = await this.inventoryService.getAllByOrder()
+        // get related order items
+        const orderItems = await this.orderItemService.getAllByOrder(order_id)
 
-        // // extract req data
-        // const { quantity } = originalOrder
+        // loop through each item and update the available quantity
+        await Promise.each(inventories, async inventoryItem => {
+            await Promise.each(orderItems, async orderItem => {
 
-        // // get inventory info for the specified item
-        // const inventoryItem = await this.inventoryService.getOneByName(name)
+                // re add quantity back to inventory
+                const updatedInventoryItemQuantity = inventoryItem.quantity_available + orderItem.quantity
 
-        // // destructure invetory item data
-        // const { inventory_id, quantity_available } = inventoryItem
+                // update inventory
+                await this.inventoryService.edit(inventoryItem.inventory_id, {
+                    quantity_available: updatedInventoryItemQuantity,
+                })
+            })
+
+        })
+
+        // delete order items
+        await Promise.each(orderItems, async orderItem => {
+            await this.orderItemService.delete(orderItem.order_item_id)
+        })
 
         // delete order
-        await this.orderRepository.delete({order_id})
-
-        // // update inventory
-        // const updatedInventoryItemQuantity = quantity_available + quantity
-        // await this.inventoryService.edit(inventory_id, {
-        //     quantity_available: updatedInventoryItemQuantity,
-        // })
+        await this.orderRepository.update({order_id}, {status: 'cancelled'})
 
         return {deleted: true}
     }
@@ -190,13 +208,13 @@ export class OrderService {
      * @param order_id String
      */
     async getOne(order_id: string) {
-        return await this.orderRepository.findOne({ where: { order_id } })
+        return this.orderRepository.findOne({ where: { order_id } })
     }
 
     /**
      * Return all order items
      */
     async getAll() {
-        return await this.orderRepository.find();
+        return this.orderRepository.find();
     }
 }

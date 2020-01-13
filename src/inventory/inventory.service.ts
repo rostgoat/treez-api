@@ -12,7 +12,7 @@ export class InventoryService {
     constructor(@InjectRepository(InventoryEntity) private inventoryRepository: Repository<InventoryEntity>) {}
 
     /**
-     * Add invetory item
+     * Add inventory item
      * @param data Object
      */
     async add(data: InventoryDTO) {
@@ -41,7 +41,7 @@ export class InventoryService {
     }
 
     /**
-     * Return specific invetory item specified by inventory_id
+     * Return specific inventory item specified by inventory_id
      * @param inventory_id String
      */
     async getOne(inventory_id: string) {
@@ -49,11 +49,19 @@ export class InventoryService {
     }
 
     /**
-     * Return specific invetory item specified by name
+     * Return specific inventory item specified by name
      * @param name String
      */
     async getOneByName(name: string) {
         return await this.inventoryRepository.findOne({ where: { name } })
+    }
+
+    /**
+     * Return specific inventory items related to an order
+     * @param name String
+     */
+    async getAllByOrder() {
+        return await this.inventoryRepository.find({ relations: ['order'] })
     }
 
     /**

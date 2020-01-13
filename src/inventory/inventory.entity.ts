@@ -1,9 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique, ManyToOne } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, Unique, ManyToOne, JoinColumn } from 'typeorm'
 import { OrderEntity } from '../order/order.entity'
 /**
  * Inventory Entity
  */
-@Entity('inventory')
+@Entity('inventories')
 @Unique(['name'])
 export class InventoryEntity {
     @PrimaryGeneratedColumn('uuid') inventory_id: string
@@ -11,6 +11,8 @@ export class InventoryEntity {
     @Column('text') description: string
     @Column('float4') price: number
     @Column('integer') quantity_available: number
-    @ManyToOne(type => OrderEntity, order => order.inventories) order: OrderEntity;
+    @ManyToOne(type => OrderEntity, order => order.inventories)
+    @JoinColumn({ name: 'order_id' })
+    order: OrderEntity;
 
 }

@@ -2,6 +2,7 @@
  * Order data transfer object expected from controller
  */
 export interface OrderDTO {
+    order_id: string,
     customer_email: string,
     status: string,
     amount: number,
