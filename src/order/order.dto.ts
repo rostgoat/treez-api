@@ -11,6 +11,7 @@ export interface OrderDTO {
             name: string,
             quantity_available: number,
             quantity: number,
+            previous_quantity: number,
         }
     ]
 }
