@@ -33,8 +33,8 @@ export class OrderController {
      * @param order_id String
      */
     @Delete(':id')
-    delete(@Param('id') order_id: string) {
-        return this.orderService.delete(order_id)
+    delete(@Param('id') order_id: string, @Body() body: Partial<OrderDTO>) {
+        return this.orderService.delete(order_id, body)
     }
 
     /**

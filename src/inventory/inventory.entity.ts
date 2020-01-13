@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm'
-
+import { Entity, PrimaryGeneratedColumn, Column, Unique, ManyToOne } from 'typeorm'
+import { OrderEntity } from '../order/order.entity'
 /**
  * Inventory Entity
  */
@@ -11,4 +11,7 @@ export class InventoryEntity {
     @Column('text') description: string
     @Column('float4') price: number
     @Column('integer') quantity_available: number
+    @Column('integer') quantity: number
+    @ManyToOne(type => OrderEntity, order => order.inventories) order: OrderEntity;
+
 }

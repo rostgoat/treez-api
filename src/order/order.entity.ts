@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm'
-
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm'
+import { InventoryEntity } from '../inventory/inventory.entity'
 /**
  * Inventory Entity
  */
@@ -11,4 +11,5 @@ export class OrderEntity {
     @Column('text') status: string
     @Column('decimal') amount: number
     @Column('integer') quantity: number
+    @OneToMany(type => InventoryEntity, inventory => inventory.order) inventories: InventoryEntity[];
 }
