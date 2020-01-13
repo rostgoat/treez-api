@@ -4,6 +4,9 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { InventoryModule } from './inventory/inventory.module'
 
+/**
+ * Main Module
+ */
 @Module({
   imports: [TypeOrmModule.forRoot(), InventoryModule],
   controllers: [AppController],

@@ -1,5 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
 
+/**
+ * Inventory Entity
+ */
 @Entity('inventory')
 export class InventoryEntity {
     @PrimaryGeneratedColumn('uuid') id: string
