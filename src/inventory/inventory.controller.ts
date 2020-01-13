@@ -5,7 +5,7 @@ import { InventoryDTO } from './inventory.dto';
 /**
  * Inventory Controller
  */
-@Controller('inventory')
+@Controller('inventories')
 export class InventoryController {
     constructor(private inventoryService: InventoryService) {}
 
@@ -14,7 +14,7 @@ export class InventoryController {
      * @param data Object
      */
     @Post()
-    createInventoryItem(@Body() data: InventoryDTO) {
+    create(@Body() data: InventoryDTO) {
         return this.inventoryService.add(data)
     }
 
@@ -24,8 +24,8 @@ export class InventoryController {
      * @param data Object
      */
     @Put(':id')
-    updateInventoryItem(@Param('id') id: string, @Body() data: Partial<InventoryDTO>) {
-        return this.inventoryService.edit(id, data)
+    update(@Param('id') id: string, @Body() body: Partial<InventoryDTO>) {
+        return this.inventoryService.edit(id, body)
     }
 
     /**
@@ -33,7 +33,7 @@ export class InventoryController {
      * @param id String
      */
     @Delete(':id')
-    deleteInventoryItem(@Param('id') id: string) {
+    delete(@Param('id') id: string) {
         return this.inventoryService.delete(id)
     }
 
@@ -41,7 +41,7 @@ export class InventoryController {
      * Get all inventory items
      */
     @Get()
-    getAllInventoryItems() {
+    find() {
         return this.inventoryService.getAll()
     }
 
@@ -50,7 +50,7 @@ export class InventoryController {
      * @param id String
      */
     @Get(':id')
-    getInventoryItem(@Param('id') id: string) {
+    findOne(@Param('id') id: string) {
         return this.inventoryService.getOne(id)
     }
 }

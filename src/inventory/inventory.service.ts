@@ -27,7 +27,8 @@ export class InventoryService {
      * @param data Object
      */
     async edit(id: string, data: Partial<InventoryDTO>) {
-        await this.inventoryRepository.update({id},data)
+        console.log('data', data)
+        await this.inventoryRepository.update({id}, data)
         return await this.inventoryRepository.findOne({id})
     }
 
