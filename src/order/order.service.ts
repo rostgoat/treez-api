@@ -68,26 +68,35 @@ export class OrderService {
      */
     async edit(order_id: string, data: Partial<OrderDTO>) {
         // extract req data
-        const { name, customer_email, amount } = data
+        const { name, quantity } = data
 
         // get inventory info for the specified item
         const inventoryItem = await this.inventoryService.getOneByName(name)
 
         // destructure invetory item data
-        const { inventory_id, quantity_available} = inventoryItem
+        const { inventory_id, quantity_available, price} = inventoryItem
 
         // check if there is enough inventory to make order
-        if (quantity_available <= 0 || amount > quantity_available) {
-            throw new Error('Cannot add item to order, insufficient quantities!')
+        if (quantity_available <= 0 || quantity > quantity_available) {
+            throw new Error('Cannot update this order, insufficient quantities!')
         }
 
-        const updatedInventoryItemQuantity = quantity_available - amount
-        const updatedInventoryItem = await this.inventoryService.edit(inventory_id, {
+        // updated order object
+        const updatedOrder = {
+            quantity,
+            amount: quantity * price,
+            status: 'updated',
+        }
+
+        // save created order changes to database
+        await this.orderRepository.update({order_id}, updatedOrder)
+
+        // update inventory
+        const updatedInventoryItemQuantity = quantity_available - quantity
+        await this.inventoryService.edit(inventory_id, {
             quantity_available: updatedInventoryItemQuantity,
         })
 
-        // save created order changes to database
-        await this.orderRepository.update({order_id}, data)
         return await this.orderRepository.findOne({order_id})
     }
 
