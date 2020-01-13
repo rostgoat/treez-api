@@ -11,7 +11,6 @@ export class InventoryEntity {
     @Column('text') description: string
     @Column('float4') price: number
     @Column('integer') quantity_available: number
-    @Column('integer') quantity: number
     @ManyToOne(type => OrderEntity, order => order.inventories) order: OrderEntity;
 
 }

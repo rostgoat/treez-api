@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import {Promise} from 'bluebird';
+import { Promise } from 'bluebird';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity } from './order.entity';
 import { OrderDTO } from './order.dto';
@@ -42,7 +42,7 @@ export class OrderService {
             if (inventoryItem) {
                 inventoryItems.push(inventoryItem)
             }
-            const amountForOneItem = inventoryItem.price * inventoryItem.quantity
+            const amountForOneItem = inventoryItem.price * quantity
 
             priceOfAllItemsRequested += amountForOneItem
             quantityOfAllItemsRequested += quantity
