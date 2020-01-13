@@ -12,7 +12,7 @@ export class InventoryService {
     constructor(@InjectRepository(InventoryEntity) private inventoryRepository: Repository<InventoryEntity>) {}
 
     /**
-     * Add invetory item 
+     * Add invetory item
      * @param data Object
      */
     async add(data: InventoryDTO) {
@@ -27,7 +27,6 @@ export class InventoryService {
      * @param data Object
      */
     async edit(id: string, data: Partial<InventoryDTO>) {
-        console.log('data', data)
         await this.inventoryRepository.update({id}, data)
         return await this.inventoryRepository.findOne({id})
     }
