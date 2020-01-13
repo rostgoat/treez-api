@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique, CreateDateColumn, Index } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm'
 
 /**
  * Inventory Entity
@@ -9,5 +9,6 @@ export class OrderEntity {
     @Column('text') customer_email: string
     @CreateDateColumn() created_date: Date
     @Column('text') status: string
-    @Column('float4') amount: number
+    @Column('decimal') amount: number
+    @Column('integer') quantity: number
 }

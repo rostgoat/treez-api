@@ -7,4 +7,5 @@ export interface OrderDTO {
     amount: number,
     name: string,
     customer_email: string,
+    quantity: number,
 }

@@ -20,16 +20,16 @@ export class OrderService {
      */
     async add(data: OrderDTO) {
         // extract req data
-        const { name, customer_email, amount } = data
+        const { name, customer_email, quantity } = data
 
         // get inventory info for the specified item
         const inventoryItem = await this.inventoryService.getOneByName(name)
 
         // destructure invetory item data
-        const { inventory_id, quantity_available} = inventoryItem
+        const { inventory_id, quantity_available, price} = inventoryItem
 
         // check if there is enough inventory to make order
-        if (quantity_available <= 0 || amount > quantity_available) {
+        if (quantity_available <= 0 || quantity > quantity_available) {
             throw new Error('Cannot add item to order, insufficient quantities!')
         }
 
@@ -38,8 +38,9 @@ export class OrderService {
             status: 'created',
             quantity_available,
             customer_email,
-            amount,
+            amount: quantity * price,
             name,
+            quantity,
         }
 
         // create new order
@@ -47,8 +48,10 @@ export class OrderService {
 
         // if the order was succesfully created, update inventory
         if (createdOrder) {
-            const updatedInventoryItemQuantity = quantity_available - amount
-            const updatedInventoryItem = await this.inventoryService.edit(inventory_id, {
+            const updatedInventoryItemQuantity = quantity_available - quantity
+
+            // update inventory
+            await this.inventoryService.edit(inventory_id, {
                 quantity_available: updatedInventoryItemQuantity,
             })
         }
@@ -64,6 +67,26 @@ export class OrderService {
      * @param data Object
      */
     async edit(order_id: string, data: Partial<OrderDTO>) {
+        // extract req data
+        const { name, customer_email, amount } = data
+
+        // get inventory info for the specified item
+        const inventoryItem = await this.inventoryService.getOneByName(name)
+
+        // destructure invetory item data
+        const { inventory_id, quantity_available} = inventoryItem
+
+        // check if there is enough inventory to make order
+        if (quantity_available <= 0 || amount > quantity_available) {
+            throw new Error('Cannot add item to order, insufficient quantities!')
+        }
+
+        const updatedInventoryItemQuantity = quantity_available - amount
+        const updatedInventoryItem = await this.inventoryService.edit(inventory_id, {
+            quantity_available: updatedInventoryItemQuantity,
+        })
+
+        // save created order changes to database
         await this.orderRepository.update({order_id}, data)
         return await this.orderRepository.findOne({order_id})
     }
