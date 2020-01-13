@@ -13,6 +13,6 @@ export class OrderEntity {
     @Column('decimal') amount: number
     @Column('integer') quantity: number
     @Column({type: 'integer', nullable: true}) previous_quantity: number
-    @OneToMany(type => InventoryEntity, inventory => inventory.order) inventories: InventoryEntity[];
+    @OneToMany(type => InventoryEntity, inventory => inventory.inventoryOrder) inventories: InventoryEntity[];
     @OneToMany(type => OrderItemEntity, order_item => order_item.order) order_items: OrderItemEntity[];
 }

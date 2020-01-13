@@ -12,7 +12,7 @@ export class OrderItemService {
     constructor(@InjectRepository(OrderItemEntity) private orderItemRepository: Repository<OrderItemEntity>) {}
 
     /**
-     * Add order item item
+     * Add order item
      * @param data Object
      */
     async add(data: OrderItemDTO) {
@@ -21,18 +21,18 @@ export class OrderItemService {
         return orderItem
     }
 
-    // /**
-    //  * Update order item item
-    //  * @param order item_id String
-    //  * @param data Object
-    //  */
-    // async edit(order item_id: string, data: Partial<OrderItemDTO>) {
-    //     await this.orderItemRepository.update({order item_id}, data)
-    //     return await this.orderItemRepository.findOne({order item_id})
-    // }
+    /**
+     * Update order item
+     * @param order_item_id String
+     * @param data Object
+     */
+    async edit(order_item_id: string, data: Partial<OrderItemDTO>) {
+        await this.orderItemRepository.update({order_item_id}, data)
+        return await this.orderItemRepository.findOne({order_item_id})
+    }
 
     /**
-     * Delete order item item
+     * Delete order item
      * @param order_item_id String
      */
     async delete(order_item_id: string) {
@@ -41,7 +41,7 @@ export class OrderItemService {
     }
 
     /**
-     * Return specific order item item specified by order_id
+     * Return specific order item specified by order_id
      * @param name String
      */
     async getOneByOrder(order_id: string) {
@@ -49,14 +49,14 @@ export class OrderItemService {
     }
 
     /**
-     * Return all order item items
+     * Return all order items
      */
     async getAll() {
         return await this.orderItemRepository.find();
     }
 
     /**
-     * Return all order item items
+     * Return all order items
      */
     async getAllByOrder(orderId: string) {
         return await this.orderItemRepository.find({ where: { orderId } })
