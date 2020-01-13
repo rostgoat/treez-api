@@ -125,6 +125,24 @@ export class OrderService {
             updatedQuantityOfAllItemsRequested += quantity
         })
 
+        // get related order items
+        const orderItems = await this.orderItemService.getAllByOrder(order_id)
+
+        // loop through each item and update the order item quantity
+        await Promise.each(inventories, async inventoryItem => {
+            await Promise.each(orderItems, async orderItem => {
+
+                const { quantity } = inventoryItem
+                const updatedItemQuantity = orderItem.quantity + quantity
+
+                // update order item quantity
+                await this.orderItemService.edit(orderItem.order_item_id, {
+                    quantity: updatedItemQuantity,
+                    previous_quantity: quantity,
+                 })
+            })
+        })
+
         // new order object
         const newOrder = {
             status: 'updated',
@@ -134,7 +152,7 @@ export class OrderService {
         }
 
         // save order
-        await this.orderRepository.save(newOrder)
+        // await this.orderRepository.save(newOrder)
 
         // save created order changes to database
         const updatedOrder = await this.orderRepository.update({order_id}, newOrder)
@@ -189,7 +207,6 @@ export class OrderService {
                     quantity_available: updatedInventoryItemQuantity,
                 })
             })
-
         })
 
         // delete order items

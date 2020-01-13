@@ -9,8 +9,6 @@ export class OrderItemEntity {
     @CreateDateColumn() created_date: Date
     @Column('integer') quantity: number
     @Column({type: 'integer', nullable: true}) previous_quantity: number
-    @ManyToOne(type => OrderEntity, order => order.order_items)
-    @JoinColumn({ name: 'order_id' })
-    order: OrderEntity[];
+    @ManyToOne(type => OrderEntity, order => order.order_items) order: OrderEntity[];
     @Column('text') public orderId: string;
 }

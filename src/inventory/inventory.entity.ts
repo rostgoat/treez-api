@@ -13,6 +13,6 @@ export class InventoryEntity {
     @Column('integer') quantity_available: number
     @ManyToOne(type => OrderEntity, order => order.inventories)
     @JoinColumn({ name: 'order_id' })
-    order: OrderEntity;
+    inventoryOrder: OrderEntity;
 
 }
