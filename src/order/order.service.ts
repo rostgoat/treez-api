@@ -74,7 +74,6 @@ export class OrderService {
                         quantity_available: updatedInventoryItemQuantity,
                     })
                 })
-
             })
         }
 
@@ -89,39 +88,71 @@ export class OrderService {
      * @param data Object
      */
     async edit(order_id: string, data: Partial<OrderDTO>) {
-        // // extract req data
-        // const { name, quantity } = data
+        const inventoryItems = []
+        let updatedQuantityOfAllItemsRequested = 0;
+        let updatedPriceOfAllItemsRequested = 0;
 
-        // // get original order
-        // const originalOrder = await this.getOne(order_id);
+        // extract req data
+        const { inventories, customer_email } = data
 
-        // // get inventory info for the specified item
-        // const inventoryItem = await this.inventoryService.getOneByName(name)
+        // loop through all inventory items and put them into an array
+        await Promise.each(inventories, async item => {
+            const { name, quantity } = item
 
-        // // destructure invetory item data
-        // const { inventory_id, quantity_available, price} = inventoryItem
+            // get inventory info for the specified item
+            const inventoryItem = await this.inventoryService.getOneByName(name)
 
-        // // check if there is enough inventory to make order
-        // if (quantity_available <= 0 || quantity > quantity_available) {
-        //     throw new Error('Cannot update this order, insufficient quantities!')
-        // }
+            // const updatedItemQuantity =
+            // check if there is enough inventory to make order
+            if (inventoryItem.quantity_available <= 0 || quantity > inventoryItem.quantity_available) {
+                throw new Error(`Cannot update order, insufficient quantities of ${name}!`)
+            }
 
-        // // updated order object
-        // const updatedOrder = {
-        //     quantity,
-        //     amount: quantity * price,
-        //     status: 'updated',
-        // }
+            const amountForOneItem = inventoryItem.price * quantity
+
+            updatedPriceOfAllItemsRequested += amountForOneItem
+            updatedQuantityOfAllItemsRequested += quantity
+        })
+
+        // new order object
+        const newOrder = {
+            status: 'updated',
+            customer_email,
+            amount: updatedPriceOfAllItemsRequested,
+            quantity: updatedQuantityOfAllItemsRequested,
+        }
+
+        // save order
+        await this.orderRepository.save(newOrder)
 
         // save created order changes to database
-        await this.orderRepository.update({order_id}, {})
+        const updatedOrder = await this.orderRepository.update({order_id}, newOrder)
 
-        // // update inventory
-        // const updatedInventoryItemQuantity = (quantity_available + originalOrder.quantity) - quantity
-        // await this.inventoryService.edit(inventory_id, {
-        //     quantity_available: updatedInventoryItemQuantity,
-        // })
+        // if the order was succesfully created, update inventory
+        if (updatedOrder) {
 
+            // loop through each item and update the inventory entity
+            await Promise.each(inventories, async item => {
+                const { name, quantity, previous_quantity } = item
+
+                // get inventory info for the specified item
+                const inventoryItem = await this.inventoryService.getOneByName(name)
+
+                // calculate new quantity available
+                const updatedInventoryItemQuantity = (inventoryItem.quantity_available + previous_quantity) - quantity
+
+                // add item to array
+                if (inventoryItem) {
+                    inventoryItems.push(inventoryItem)
+                }
+
+                // update inventory
+                await this.inventoryService.edit(inventoryItem.inventory_id, {
+                    quantity_available: updatedInventoryItemQuantity,
+                })
+
+            })
+        }
         return await this.orderRepository.findOne({order_id})
     }
 
